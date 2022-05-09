@@ -6,12 +6,12 @@
 package software.bernie.geckolib3.core.keyframe;
 
 
-import com.eliotlash.mclib.math.IValue;
+import com.eliotlash.molang.ast.Expr;
 
 public class BoneAnimation
 {
 	public String boneName;
-	public VectorKeyFrameList<KeyFrame<IValue>> rotationKeyFrames;
-	public VectorKeyFrameList<KeyFrame<IValue>> positionKeyFrames;
-	public VectorKeyFrameList<KeyFrame<IValue>> scaleKeyFrames;
+	public VectorKeyFrameList<KeyFrame<Expr>> rotationKeyFrames;
+	public VectorKeyFrameList<KeyFrame<Expr>> positionKeyFrames;
+	public VectorKeyFrameList<KeyFrame<Expr>> scaleKeyFrames;
 }

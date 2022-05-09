@@ -5,8 +5,8 @@
 
 package software.bernie.geckolib3.core.keyframe;
 
-import com.eliotlash.mclib.math.IValue;
 
+import com.eliotlash.molang.ast.Expr;
 
 public class AnimationPoint
 {
@@ -31,9 +31,10 @@ public class AnimationPoint
 	 * The current keyframe.
 	 */
 
-	public final KeyFrame<IValue> keyframe;
+	public final KeyFrame<Expr> keyframe;
 
-	public AnimationPoint( KeyFrame<IValue> keyframe, Double currentTick, Double animationEndTick, Double animationStartValue, Double animationEndValue)
+	public AnimationPoint( KeyFrame<Expr> keyframe, Double currentTick, Double animationEndTick,
+						   Double animationStartValue, Double animationEndValue)
 	{
 		this.keyframe = keyframe;
 		this.currentTick = currentTick;
@@ -42,12 +43,12 @@ public class AnimationPoint
 		this.animationEndValue = animationEndValue;
 	}
 
-	public AnimationPoint(KeyFrame<IValue> keyframe, double tick, double animationEndTick, float animationStartValue, double animationEndValue)
+	public AnimationPoint(KeyFrame<Expr> keyframe, double tick, double animationEndTick, float animationStartValue, double animationEndValue)
 	{
 		this.keyframe = keyframe;
 		this.currentTick = tick;
 		this.animationEndTick = animationEndTick;
-		this.animationStartValue = Double.valueOf(animationStartValue);
+		this.animationStartValue = (double) animationStartValue;
 		this.animationEndValue = animationEndValue;
 	}
 

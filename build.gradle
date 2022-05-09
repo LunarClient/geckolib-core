@@ -5,6 +5,7 @@ group project.group
 def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
 version = snapshotVersion == null ? project.version : "SNAPSHOT-" + snapshotVersion
 archivesBaseName = project.archivesBaseName
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 repositories {
     mavenCentral()
@@ -16,6 +17,7 @@ repositories {
 
 dependencies {
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
+    implementation project(':particleman')
 }
 
 jar {
