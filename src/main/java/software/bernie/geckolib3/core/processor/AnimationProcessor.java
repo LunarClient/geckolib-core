@@ -28,9 +28,7 @@ public class AnimationProcessor<T extends IAnimatable> {
     }
 
     public void tickAnimation(IAnimatable entity, Integer uniqueID, double seekTime, AnimationEvent event,
-                              Evaluator evaluator, boolean crashWhenCantFindBone) {
-        ExecutionContext context = new ExecutionContext();
-        evaluator.setExecutionContext(context);
+                              Evaluator evaluator, ExecutionContext context, boolean crashWhenCantFindBone) {
         if (seekTime != lastTickValue) {
             animatedEntities.clear();
         } else if (animatedEntities.contains(uniqueID)) { // Entity already animated on this tick
