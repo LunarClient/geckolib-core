@@ -5,8 +5,8 @@
 
 package software.bernie.geckolib3.core.controller;
 
+import com.eliotlash.molang.ast.Evaluatable;
 import com.eliotlash.molang.ast.Evaluator;
-import com.eliotlash.molang.ast.Expr;
 import com.eliotlash.molang.variables.ExecutionContext;
 import org.apache.commons.lang3.tuple.Pair;
 import software.bernie.geckolib3.core.AnimationState;
@@ -402,7 +402,6 @@ public class AnimationController<T extends IAnimatable> {
             }
         }
 
-
         // Handle transitioning to a different animation (or just starting one)
         if (animationState == AnimationState.Transitioning) {
             // Just started transitioning, so set the current animation to the first one
@@ -429,9 +428,9 @@ public class AnimationController<T extends IAnimatable> {
                     BoneSnapshot initialSnapshot = first.get().getInitialSnapshot();
                     assert boneSnapshot != null : "Bone snapshot was null";
 
-                    VectorKeyFrameList<KeyFrame<Expr>> rotationKeyFrames = boneAnimation.rotationKeyFrames;
-                    VectorKeyFrameList<KeyFrame<Expr>> positionKeyFrames = boneAnimation.positionKeyFrames;
-                    VectorKeyFrameList<KeyFrame<Expr>> scaleKeyFrames = boneAnimation.scaleKeyFrames;
+                    VectorKeyFrameList<KeyFrame<Evaluatable>> rotationKeyFrames = boneAnimation.rotationKeyFrames;
+                    VectorKeyFrameList<KeyFrame<Evaluatable>> positionKeyFrames = boneAnimation.positionKeyFrames;
+                    VectorKeyFrameList<KeyFrame<Evaluatable>> scaleKeyFrames = boneAnimation.scaleKeyFrames;
 
                     // Adding the initial positions of the upcoming animation, so the model
                     // transitions to the initial state of the new animation
@@ -570,9 +569,9 @@ public class AnimationController<T extends IAnimatable> {
                 }
             }
 
-            VectorKeyFrameList<KeyFrame<Expr>> rotationKeyFrames = boneAnimation.rotationKeyFrames;
-            VectorKeyFrameList<KeyFrame<Expr>> positionKeyFrames = boneAnimation.positionKeyFrames;
-            VectorKeyFrameList<KeyFrame<Expr>> scaleKeyFrames = boneAnimation.scaleKeyFrames;
+            VectorKeyFrameList<KeyFrame<Evaluatable>> rotationKeyFrames = boneAnimation.rotationKeyFrames;
+            VectorKeyFrameList<KeyFrame<Evaluatable>> positionKeyFrames = boneAnimation.positionKeyFrames;
+            VectorKeyFrameList<KeyFrame<Evaluatable>> scaleKeyFrames = boneAnimation.scaleKeyFrames;
 
             if (!rotationKeyFrames.xKeyFrames.isEmpty()) {
                 boneAnimationQueue.rotationXQueue
@@ -668,21 +667,21 @@ public class AnimationController<T extends IAnimatable> {
     }
 
     // Helper method to transform a KeyFrameLocation to an AnimationPoint
-    private AnimationPoint getAnimationPointAtTick(List<KeyFrame<Expr>> frames, double tick, boolean isRotation,
+    private AnimationPoint getAnimationPointAtTick(List<KeyFrame<Evaluatable>> frames, double tick, boolean isRotation,
                                                    Axis axis, Evaluator evaluator) {
-        KeyFrameLocation<KeyFrame<Expr>> location = getCurrentKeyFrameLocation(frames, tick);
-        KeyFrame<Expr> currentFrame = location.currentFrame;
-        double startValue = currentFrame.getStartValue().get();
-        double endValue = currentFrame.getEndValue().get();
+        KeyFrameLocation<KeyFrame<Evaluatable>> location = getCurrentKeyFrameLocation(frames, tick);
+        KeyFrame<Evaluatable> currentFrame = location.currentFrame;
+        double startValue = currentFrame.getStartValue().evaluate(evaluator);
+        double endValue = currentFrame.getEndValue().evaluate(evaluator);
 
         if (isRotation) {
-            if (!(currentFrame.getStartValue() instanceof Expr.Constant)) {
+            if (!currentFrame.getStartValue().isConstant()) {
                 startValue = Math.toRadians(startValue);
                 if (axis == Axis.X || axis == Axis.Y) {
                     startValue *= -1;
                 }
             }
-            if (!(currentFrame.getEndValue() instanceof Expr.Constant)) {
+            if (!currentFrame.getEndValue().isConstant()) {
                 endValue = Math.toRadians(endValue);
                 if (axis == Axis.X || axis == Axis.Y) {
                     endValue *= -1;
@@ -697,10 +696,10 @@ public class AnimationController<T extends IAnimatable> {
      * Returns the current keyframe object, plus how long the previous keyframes
      * have taken (aka elapsed animation time)
      **/
-    private KeyFrameLocation<KeyFrame<Expr>> getCurrentKeyFrameLocation(List<KeyFrame<Expr>> frames,
-                                                                        double ageInTicks) {
+    private KeyFrameLocation<KeyFrame<Evaluatable>> getCurrentKeyFrameLocation(List<KeyFrame<Evaluatable>> frames,
+                                                                               double ageInTicks) {
         double totalTimeTracker = 0;
-        for (KeyFrame<Expr> frame : frames) {
+        for (KeyFrame<Evaluatable> frame : frames) {
             totalTimeTracker += frame.getLength();
             if (totalTimeTracker > ageInTicks) {
                 double tick = (ageInTicks - (totalTimeTracker - frame.getLength()));
