@@ -352,6 +352,7 @@ public class AnimationController<T extends IAnimatable> {
     public void process(double tick, AnimationEvent<T> event, List<IBone> modelRendererList,
                         HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection, Evaluator evaluator,
                         ExecutionContext context, boolean crashWhenCantFindBone) {
+        context.setVariable("query.life_time", tick / 20);
 
         if (currentAnimation != null) {
             IAnimatableModel<T> model = getModel(this.animatable);
@@ -435,11 +436,11 @@ public class AnimationController<T extends IAnimatable> {
                     // Adding the initial positions of the upcoming animation, so the model
                     // transitions to the initial state of the new animation
                     if (!rotationKeyFrames.xKeyFrames.isEmpty()) {
-                        AnimationPoint xPoint = getTransitionPointAtTick(rotationKeyFrames.xKeyFrames, tick, true, Axis.X,
+                        AnimationPoint xPoint = getTransitionPointAtTick(context, rotationKeyFrames.xKeyFrames, tick, true, Axis.X,
                                 evaluator);
-                        AnimationPoint yPoint = getTransitionPointAtTick(rotationKeyFrames.yKeyFrames, tick, true, Axis.Y,
+                        AnimationPoint yPoint = getTransitionPointAtTick(context, rotationKeyFrames.yKeyFrames, tick, true, Axis.Y,
                                 evaluator);
-                        AnimationPoint zPoint = getTransitionPointAtTick(rotationKeyFrames.zKeyFrames, tick, true, Axis.Z,
+                        AnimationPoint zPoint = getTransitionPointAtTick(context, rotationKeyFrames.zKeyFrames, tick, true, Axis.Z,
                                 evaluator);
                         boneAnimationQueue.rotationXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.rotationValueX - initialSnapshot.rotationValueX,
@@ -453,11 +454,11 @@ public class AnimationController<T extends IAnimatable> {
                     }
 
                     if (!positionKeyFrames.xKeyFrames.isEmpty()) {
-                        AnimationPoint xPoint = getTransitionPointAtTick(positionKeyFrames.xKeyFrames, tick, false, Axis.X,
+                        AnimationPoint xPoint = getTransitionPointAtTick(context, positionKeyFrames.xKeyFrames, tick, false, Axis.X,
                                 evaluator);
-                        AnimationPoint yPoint = getTransitionPointAtTick(positionKeyFrames.yKeyFrames, tick, false, Axis.Y,
+                        AnimationPoint yPoint = getTransitionPointAtTick(context, positionKeyFrames.yKeyFrames, tick, false, Axis.Y,
                                 evaluator);
-                        AnimationPoint zPoint = getTransitionPointAtTick(positionKeyFrames.zKeyFrames, tick, false, Axis.Z,
+                        AnimationPoint zPoint = getTransitionPointAtTick(context, positionKeyFrames.zKeyFrames, tick, false, Axis.Z,
                                 evaluator);
                         boneAnimationQueue.positionXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.positionOffsetX, xPoint.animationStartValue));
@@ -468,11 +469,11 @@ public class AnimationController<T extends IAnimatable> {
                     }
 
                     if (!scaleKeyFrames.xKeyFrames.isEmpty()) {
-                        AnimationPoint xPoint = getTransitionPointAtTick(scaleKeyFrames.xKeyFrames, tick, false, Axis.X,
+                        AnimationPoint xPoint = getTransitionPointAtTick(context, scaleKeyFrames.xKeyFrames, tick, false, Axis.X,
                                 evaluator);
-                        AnimationPoint yPoint = getTransitionPointAtTick(scaleKeyFrames.yKeyFrames, tick, false, Axis.Y,
+                        AnimationPoint yPoint = getTransitionPointAtTick(context, scaleKeyFrames.yKeyFrames, tick, false, Axis.Y,
                                 evaluator);
-                        AnimationPoint zPoint = getTransitionPointAtTick(scaleKeyFrames.zKeyFrames, tick, false, Axis.Z,
+                        AnimationPoint zPoint = getTransitionPointAtTick(context, scaleKeyFrames.zKeyFrames, tick, false, Axis.Z,
                                 evaluator);
                         boneAnimationQueue.scaleXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.scaleValueX, xPoint.animationStartValue));
@@ -491,7 +492,6 @@ public class AnimationController<T extends IAnimatable> {
 
     private void setAnimTime(ExecutionContext context, double tick) {
         context.setVariable("query.anim_time", tick / 20);
-        context.setVariable("query.life_time", tick / 20);
     }
 
     @SuppressWarnings("unchecked")
@@ -666,9 +666,10 @@ public class AnimationController<T extends IAnimatable> {
         }
     }
 
-    private AnimationPoint getTransitionPointAtTick(List<KeyFrame<Evaluatable>> frames, double tick, boolean isRotation,
-                                                   Axis axis, Evaluator evaluator) {
-        return getAnimationPointAtTick(frames, frames.size() == 1 ? tick : 0, isRotation, axis, evaluator);
+    private AnimationPoint getTransitionPointAtTick(ExecutionContext context, List<KeyFrame<Evaluatable>> frames, double tick, boolean isRotation,
+                                                    Axis axis, Evaluator evaluator) {
+        setAnimTime(context, tick);
+        return getAnimationPointAtTick(frames, tick, isRotation, axis, evaluator);
     }
 
     // Helper method to transform a KeyFrameLocation to an AnimationPoint
