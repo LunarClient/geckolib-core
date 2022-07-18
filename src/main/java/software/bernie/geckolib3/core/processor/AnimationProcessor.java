@@ -88,11 +88,11 @@ public class AnimationProcessor<T extends IAnimatable> {
                 }
                 if (rXPoint != null && rYPoint != null && rZPoint != null) {
                     bone.setRotationX(MathUtil.lerpValues(rXPoint, controller.easingType,
-                            controller.customEasingMethod) + initialSnapshot.rotationValueX);
+                            controller.customEasingMethod, controller.easingArgs) + initialSnapshot.rotationValueX);
                     bone.setRotationY(MathUtil.lerpValues(rYPoint, controller.easingType,
-                            controller.customEasingMethod) + initialSnapshot.rotationValueY);
+                            controller.customEasingMethod, controller.easingArgs) + initialSnapshot.rotationValueY);
                     bone.setRotationZ(MathUtil.lerpValues(rZPoint, controller.easingType,
-                            controller.customEasingMethod) + initialSnapshot.rotationValueZ);
+                            controller.customEasingMethod, controller.easingArgs) + initialSnapshot.rotationValueZ);
                     snapshot.rotationValueX = bone.getRotationX();
                     snapshot.rotationValueY = bone.getRotationY();
                     snapshot.rotationValueZ = bone.getRotationZ();
@@ -103,11 +103,11 @@ public class AnimationProcessor<T extends IAnimatable> {
                 // If there's any position points for this bone
                 if (pXPoint != null && pYPoint != null && pZPoint != null) {
                     bone.setPositionX(MathUtil.lerpValues(pXPoint, controller.easingType,
-                            controller.customEasingMethod));
+                            controller.customEasingMethod, controller.easingArgs));
                     bone.setPositionY(MathUtil.lerpValues(pYPoint, controller.easingType,
-                            controller.customEasingMethod));
+                            controller.customEasingMethod, controller.easingArgs));
                     bone.setPositionZ(MathUtil.lerpValues(pZPoint, controller.easingType,
-                            controller.customEasingMethod));
+                            controller.customEasingMethod, controller.easingArgs));
                     snapshot.positionOffsetX = bone.getPositionX();
                     snapshot.positionOffsetY = bone.getPositionY();
                     snapshot.positionOffsetZ = bone.getPositionZ();
@@ -119,11 +119,11 @@ public class AnimationProcessor<T extends IAnimatable> {
                 // If there's any scale points for this bone
                 if (sXPoint != null && sYPoint != null && sZPoint != null) {
                     bone.setScaleX(MathUtil.lerpValues(sXPoint, controller.easingType,
-                            controller.customEasingMethod));
+                            controller.customEasingMethod, controller.easingArgs));
                     bone.setScaleY(MathUtil.lerpValues(sYPoint, controller.easingType,
-                            controller.customEasingMethod));
+                            controller.customEasingMethod, controller.easingArgs));
                     bone.setScaleZ(MathUtil.lerpValues(sZPoint, controller.easingType,
-                            controller.customEasingMethod));
+                            controller.customEasingMethod, controller.easingArgs));
                     snapshot.scaleValueX = bone.getScaleX();
                     snapshot.scaleValueY = bone.getScaleY();
                     snapshot.scaleValueZ = bone.getScaleZ();

@@ -206,6 +206,8 @@ public class AnimationController<T extends IAnimatable> {
      */
     public EasingType easingType = EasingType.NONE;
 
+    public List<Double> easingArgs = null;
+
     /**
      * Instantiates a new Animation controller. Each animation controller can run
      * one animation at a time. You can have several animation controllers for each
