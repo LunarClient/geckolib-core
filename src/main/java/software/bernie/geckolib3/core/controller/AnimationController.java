@@ -435,11 +435,11 @@ public class AnimationController<T extends IAnimatable> {
                     // Adding the initial positions of the upcoming animation, so the model
                     // transitions to the initial state of the new animation
                     if (!rotationKeyFrames.xKeyFrames.isEmpty()) {
-                        AnimationPoint xPoint = getAnimationPointAtTick(rotationKeyFrames.xKeyFrames, 0, true, Axis.X,
+                        AnimationPoint xPoint = getTransitionPointAtTick(rotationKeyFrames.xKeyFrames, tick, true, Axis.X,
                                 evaluator);
-                        AnimationPoint yPoint = getAnimationPointAtTick(rotationKeyFrames.yKeyFrames, 0, true, Axis.Y,
+                        AnimationPoint yPoint = getTransitionPointAtTick(rotationKeyFrames.yKeyFrames, tick, true, Axis.Y,
                                 evaluator);
-                        AnimationPoint zPoint = getAnimationPointAtTick(rotationKeyFrames.zKeyFrames, 0, true, Axis.Z,
+                        AnimationPoint zPoint = getTransitionPointAtTick(rotationKeyFrames.zKeyFrames, tick, true, Axis.Z,
                                 evaluator);
                         boneAnimationQueue.rotationXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.rotationValueX - initialSnapshot.rotationValueX,
@@ -453,11 +453,11 @@ public class AnimationController<T extends IAnimatable> {
                     }
 
                     if (!positionKeyFrames.xKeyFrames.isEmpty()) {
-                        AnimationPoint xPoint = getAnimationPointAtTick(positionKeyFrames.xKeyFrames, 0, true, Axis.X,
+                        AnimationPoint xPoint = getTransitionPointAtTick(positionKeyFrames.xKeyFrames, tick, false, Axis.X,
                                 evaluator);
-                        AnimationPoint yPoint = getAnimationPointAtTick(positionKeyFrames.yKeyFrames, 0, true, Axis.Y,
+                        AnimationPoint yPoint = getTransitionPointAtTick(positionKeyFrames.yKeyFrames, tick, false, Axis.Y,
                                 evaluator);
-                        AnimationPoint zPoint = getAnimationPointAtTick(positionKeyFrames.zKeyFrames, 0, true, Axis.Z,
+                        AnimationPoint zPoint = getTransitionPointAtTick(positionKeyFrames.zKeyFrames, tick, false, Axis.Z,
                                 evaluator);
                         boneAnimationQueue.positionXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.positionOffsetX, xPoint.animationStartValue));
@@ -468,11 +468,11 @@ public class AnimationController<T extends IAnimatable> {
                     }
 
                     if (!scaleKeyFrames.xKeyFrames.isEmpty()) {
-                        AnimationPoint xPoint = getAnimationPointAtTick(scaleKeyFrames.xKeyFrames, 0, true, Axis.X,
+                        AnimationPoint xPoint = getTransitionPointAtTick(scaleKeyFrames.xKeyFrames, tick, false, Axis.X,
                                 evaluator);
-                        AnimationPoint yPoint = getAnimationPointAtTick(scaleKeyFrames.yKeyFrames, 0, true, Axis.Y,
+                        AnimationPoint yPoint = getTransitionPointAtTick(scaleKeyFrames.yKeyFrames, tick, false, Axis.Y,
                                 evaluator);
-                        AnimationPoint zPoint = getAnimationPointAtTick(scaleKeyFrames.zKeyFrames, 0, true, Axis.Z,
+                        AnimationPoint zPoint = getTransitionPointAtTick(scaleKeyFrames.zKeyFrames, tick, false, Axis.Z,
                                 evaluator);
                         boneAnimationQueue.scaleXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.scaleValueX, xPoint.animationStartValue));
@@ -664,6 +664,11 @@ public class AnimationController<T extends IAnimatable> {
             // assert tick - this.tickOffset >= 0;
             return animationSpeed * Math.max(tick - tickOffset, 0.0D);
         }
+    }
+
+    private AnimationPoint getTransitionPointAtTick(List<KeyFrame<Evaluatable>> frames, double tick, boolean isRotation,
+                                                   Axis axis, Evaluator evaluator) {
+        return getAnimationPointAtTick(frames, frames.size() == 1 ? tick : 0, isRotation, axis, evaluator);
     }
 
     // Helper method to transform a KeyFrameLocation to an AnimationPoint
