@@ -5,8 +5,12 @@ group project.group
 def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
 version = snapshotVersion == null ? project.version : "SNAPSHOT-" + snapshotVersion
 archivesBaseName = project.archivesBaseName
-sourceCompatibility = 17 // java 17
-targetCompatibility = 17
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
 
 repositories {
     mavenCentral()
