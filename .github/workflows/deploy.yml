@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@master
         with:
           submodules: 'recursive'
-          
+
       - name: Configure Google Cloud credentials
         uses: google-github-actions/auth@v1
         with:
@@ -31,4 +31,4 @@ jobs:
           java-version: 16
 
       - name: Build
-        run: ./gradlew publish
+        run: ./gradlew :publish
