@@ -16,7 +16,9 @@ jobs:
     steps:
       - name: Checkout from GitHub
         uses: actions/checkout@master
-
+        with:
+          submodules: 'recursive'
+          
       - name: Configure Google Cloud credentials
         uses: google-github-actions/auth@v1
         with:
