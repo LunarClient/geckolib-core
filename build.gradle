@@ -1,9 +1,22 @@
-apply plugin: 'java'
+buildscript {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'gradle.plugin.com.google.cloud.artifactregistry:artifactregistry-gradle-plugin:2.2.0'
+    }
+}
+
+plugins {
+    id 'java-library'
+}
+
 apply plugin: 'maven-publish'
+apply plugin: 'com.google.cloud.artifactregistry.gradle-plugin'
 
 group project.group
-def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
-version = snapshotVersion == null ? project.version : "SNAPSHOT-" + snapshotVersion
+version = project.version
 archivesBaseName = project.archivesBaseName
 
 java {
@@ -14,10 +27,6 @@ java {
 
 repositories {
     mavenCentral()
-    maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
-    maven {
-    	url "https://maven.cloudsmith.io/geckolib3/geckolib/"
-    }
 }
 
 dependencies {
@@ -41,45 +50,28 @@ jar {
     }
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
             artifact jar
             artifactId = project.archivesBaseName
+            pom {
+                name = project.archivesBaseName
+                licenses {
+                    license {
+                        name = 'MIT license'
+                        url = 'http://opensource.org/licenses/MIT'
+                        distribution = 'repo'
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        repositories {
+            maven {
+                url "artifactregistry://us-maven.pkg.dev/moonsworth-299m4oir/maven-public"
+            }
         }
     }
 }
-
-publishing {
-    repositories {
-        maven {
-	      name = "cloudsmith"
-	      url = "https://maven.cloudsmith.io/geckolib3/geckolib/"
-	      def releasesRepoUrl = "https://maven.cloudsmith.io/geckolib3/geckolib/"
-	      def snapshotsRepoUrl = "https://maven.cloudsmith.io/geckolib3/geckolib/"
-	      url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-	      credentials {
-                def envUsername = System.getenv("cloudUsername")
-                def envPassword = System.getenv("cloudPassword")
-                username = envUsername == null ? findProperty("cloudUsername") : envUsername
-                password = envPassword == null ? findProperty("cloudPassword") : envPassword
-	      }
-	    }
-    }
-}
-
