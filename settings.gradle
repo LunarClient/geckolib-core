@@ -8,4 +8,4 @@
  */
 
 rootProject.name = 'geckolibcore'
-include(':geckolibcore:particleman')
+include(':particleman')
