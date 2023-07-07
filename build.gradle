@@ -31,7 +31,10 @@ repositories {
 
 dependencies {
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
-    implementation project(':particleman')
+    def particlemanProject = findProject(':particleman') ?: findProject(':geckolibcore:particleman')
+    if (particlemanProject != null) {
+        implementation project(particlemanProject.path)
+    }
 }
 
 jar {
