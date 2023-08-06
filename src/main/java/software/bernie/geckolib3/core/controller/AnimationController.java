@@ -363,6 +363,8 @@ public class AnimationController<T extends IAnimatable> {
                     boolean loop = currentAnimation.loop;
                     currentAnimation = animation;
                     currentAnimation.loop = loop;
+                } else {
+                    return;
                 }
             }
         }
