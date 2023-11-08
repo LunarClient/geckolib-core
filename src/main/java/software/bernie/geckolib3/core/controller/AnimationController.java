@@ -354,6 +354,7 @@ public class AnimationController<T extends IAnimatable> {
     public void process(double tick, AnimationEvent<T> event, List<IBone> modelRendererList,
                         HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection, Evaluator evaluator,
                         ExecutionContext context, boolean crashWhenCantFindBone) {
+        context.setVariable("query.life_time", tick / 20);
 
         if (currentAnimation != null) {
             IAnimatableModel<T> model = getModel(this.animatable);
@@ -373,7 +374,6 @@ public class AnimationController<T extends IAnimatable> {
 
         double actualTick = tick;
         tick = adjustTick(tick);
-        context.setVariable("query.life_time", tick / 20);
 
         // Transition period has ended, reset the tick and set the animation to running
         if (animationState == AnimationState.Transitioning && tick >= transitionLengthTicks) {
