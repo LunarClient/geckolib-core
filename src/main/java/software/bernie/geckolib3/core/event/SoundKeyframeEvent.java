@@ -5,6 +5,7 @@
 
 package software.bernie.geckolib3.core.event;
 
+import com.eliotlash.molang.variables.ExecutionContext;
 import software.bernie.geckolib3.core.controller.AnimationController;
 
 public class SoundKeyframeEvent<T> extends KeyframeEvent<T>
@@ -19,9 +20,9 @@ public class SoundKeyframeEvent<T> extends KeyframeEvent<T>
 	 * @param sound        The name of the sound to play
 	 * @param controller    the controller
 	 */
-	public SoundKeyframeEvent(T entity, double animationTick, String sound, AnimationController controller)
+	public SoundKeyframeEvent(T entity, double animationTick, String sound, AnimationController controller, ExecutionContext context)
 	{
-		super(entity, animationTick, controller);
+		super(entity, animationTick, controller, context);
 		this.sound = sound;
 	}
 }

@@ -5,6 +5,7 @@
 
 package software.bernie.geckolib3.core.builder;
 
+import com.eliotlash.molang.ast.Evaluatable;
 import software.bernie.geckolib3.core.keyframe.BoneAnimation;
 import software.bernie.geckolib3.core.keyframe.EventKeyFrame;
 import software.bernie.geckolib3.core.keyframe.ParticleEventKeyFrame;
@@ -24,6 +25,6 @@ public class Animation
 	public Map<String, BoneAnimation> boneAnimations;
 	public List<EventKeyFrame<String>> soundKeyFrames = new ArrayList<>();
 	public List<ParticleEventKeyFrame> particleKeyFrames = new ArrayList<>();
-	public List<EventKeyFrame<String>> customInstructionKeyframes = new ArrayList<>();
+	public List<EventKeyFrame<Evaluatable>> customInstructionKeyframes = new ArrayList<>();
 
 }

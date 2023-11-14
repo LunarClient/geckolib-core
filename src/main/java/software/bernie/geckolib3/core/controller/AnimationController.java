@@ -431,7 +431,7 @@ public class AnimationController<T extends IAnimatable> {
                     BoneAnimationQueue boneAnimationQueue = boneAnimationQueues.get(bone.getName());
                     BoneSnapshot boneSnapshot = this.boneSnapshots.get(bone.getName());
 
-                    if(boneSnapshot == null) {
+                    if (boneSnapshot == null) {
                         continue;
                     }
 
@@ -458,8 +458,7 @@ public class AnimationController<T extends IAnimatable> {
                         boneAnimationQueue.rotationZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.rotationValueZ - initialSnapshot.rotationValueZ,
                                 zPoint.animationStartValue));
-                    }
-                    else {
+                    } else {
                         boneAnimationQueue.rotationXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.rotationValueX - initialSnapshot.rotationValueX,
                                 initialSnapshot.rotationValueX));
@@ -484,8 +483,7 @@ public class AnimationController<T extends IAnimatable> {
                                 boneSnapshot.positionOffsetY, yPoint.animationStartValue));
                         boneAnimationQueue.positionZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.positionOffsetZ, zPoint.animationStartValue));
-                    }
-                    else {
+                    } else {
                         boneAnimationQueue.positionXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.positionOffsetX, initialSnapshot.positionOffsetX));
                         boneAnimationQueue.positionYQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
@@ -507,8 +505,7 @@ public class AnimationController<T extends IAnimatable> {
                                 boneSnapshot.scaleValueY, yPoint.animationStartValue));
                         boneAnimationQueue.scaleZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.scaleValueZ, zPoint.animationStartValue));
-                    }
-                    else {
+                    } else {
                         boneAnimationQueue.scaleXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.scaleValueX, initialSnapshot.scaleValueX));
                         boneAnimationQueue.scaleYQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
@@ -630,34 +627,36 @@ public class AnimationController<T extends IAnimatable> {
             }
         }
 
-        if (soundListener != null || particleListener != null || customInstructionListener != null) {
+        if (soundListener != null) {
             for (EventKeyFrame<String> soundKeyFrame : currentAnimation.soundKeyFrames) {
                 if (!this.executedKeyFrames.contains(soundKeyFrame) && tick >= soundKeyFrame.getStartTick()) {
                     SoundKeyframeEvent<T> event = new SoundKeyframeEvent<>(this.animatable, tick,
-                            soundKeyFrame.getEventData(), this);
+                            soundKeyFrame.getEventData(), this, context);
                     soundListener.playSound(event);
 
                     this.executedKeyFrames.add(soundKeyFrame);
                 }
             }
-
+        }
+        if (particleListener != null) {
             for (ParticleEventKeyFrame particleEventKeyFrame : currentAnimation.particleKeyFrames) {
                 if (!this.executedKeyFrames.contains(
                         particleEventKeyFrame) && tick >= particleEventKeyFrame.getStartTick()) {
                     ParticleKeyFrameEvent<T> event = new ParticleKeyFrameEvent<>(this.animatable, tick,
                             particleEventKeyFrame.effect, particleEventKeyFrame.locator, particleEventKeyFrame.script,
-                            this);
+                            this, context);
                     particleListener.summonParticle(event);
 
                     this.executedKeyFrames.add(particleEventKeyFrame);
                 }
             }
-
-            for (EventKeyFrame<String> customInstructionKeyFrame : currentAnimation.customInstructionKeyframes) {
+        }
+        if (customInstructionListener != null) {
+            for (EventKeyFrame<Evaluatable> customInstructionKeyFrame : currentAnimation.customInstructionKeyframes) {
                 if (!this.executedKeyFrames.contains(
                         customInstructionKeyFrame) && tick >= customInstructionKeyFrame.getStartTick()) {
                     CustomInstructionKeyframeEvent<T> event = new CustomInstructionKeyframeEvent<>(this.animatable,
-                            tick, customInstructionKeyFrame.getEventData(), this);
+                            tick, customInstructionKeyFrame.getEventData(), this, context);
                     customInstructionListener.executeInstruction(event);
 
                     this.executedKeyFrames.add(customInstructionKeyFrame);

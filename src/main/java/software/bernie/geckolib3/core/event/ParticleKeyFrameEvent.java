@@ -1,5 +1,6 @@
 package software.bernie.geckolib3.core.event;
 
+import com.eliotlash.molang.variables.ExecutionContext;
 import software.bernie.geckolib3.core.controller.AnimationController;
 
 public class ParticleKeyFrameEvent<T> extends KeyframeEvent<T>
@@ -15,9 +16,9 @@ public class ParticleKeyFrameEvent<T> extends KeyframeEvent<T>
 	 * @param animationTick The amount of ticks that have passed in either the current transition or animation, depending on the controller's AnimationState.
 	 * @param controller    the controller
 	 */
-	public ParticleKeyFrameEvent(T entity, double animationTick, String effect, String locator, String script, AnimationController controller)
+	public ParticleKeyFrameEvent(T entity, double animationTick, String effect, String locator, String script, AnimationController controller, ExecutionContext context)
 	{
-		super(entity, animationTick, controller);
+		super(entity, animationTick, controller, context);
 		this.effect = effect;
 		this.locator = locator;
 		this.script = script;
