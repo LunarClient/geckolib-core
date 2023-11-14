@@ -78,6 +78,11 @@ public class AnimationController<T extends IAnimatable> {
 
     public boolean isJustStarting = false;
 
+    /**
+     * Only true when the model is first being rendered. We use this to prevent playing the transition when the model is first rendered
+     */
+    public boolean initializingModel = true;
+
     public static void addModelFetcher(ModelFetcher<?> fetcher) {
         modelFetchers.add(fetcher);
     }
@@ -379,10 +384,11 @@ public class AnimationController<T extends IAnimatable> {
         tick = adjustTick(tick);
 
         // Transition period has ended, reset the tick and set the animation to running
-        if (animationState == AnimationState.Transitioning && tick >= transitionLengthTicks) {
+        if (animationState == AnimationState.Transitioning && (tick >= transitionLengthTicks || initializingModel)) {
             this.shouldResetTick = true;
             animationState = AnimationState.Running;
             tick = adjustTick(actualTick);
+            initializingModel = false;
         }
 
         assert tick >= 0 : "GeckoLib: Tick was less than zero";
