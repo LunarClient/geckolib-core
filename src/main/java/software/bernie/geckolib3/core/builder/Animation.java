@@ -11,6 +11,7 @@ import software.bernie.geckolib3.core.keyframe.ParticleEventKeyFrame;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A specific animation instance
@@ -20,7 +21,7 @@ public class Animation
 	public String animationName;
 	public Double animationLength;
 	public boolean loop = true;
-	public List<BoneAnimation> boneAnimations;
+	public Map<String, BoneAnimation> boneAnimations;
 	public List<EventKeyFrame<String>> soundKeyFrames = new ArrayList<>();
 	public List<ParticleEventKeyFrame> particleKeyFrames = new ArrayList<>();
 	public List<EventKeyFrame<String>> customInstructionKeyframes = new ArrayList<>();

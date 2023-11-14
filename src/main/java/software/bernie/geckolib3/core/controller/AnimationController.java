@@ -418,33 +418,27 @@ public class AnimationController<T extends IAnimatable> {
             }
             if (currentAnimation != null) {
                 setAnimTime(context, 0);
-                for (BoneAnimation boneAnimation : currentAnimation.boneAnimations) {
-                    BoneAnimationQueue boneAnimationQueue = boneAnimationQueues.get(boneAnimation.boneName);
-                    BoneSnapshot boneSnapshot = this.boneSnapshots.get(boneAnimation.boneName);
-                    Optional<IBone> first = modelRendererList.stream()
-                            .filter(x -> x.getName().equals(boneAnimation.boneName)).findFirst();
-                    if (!first.isPresent()) {
-                        if (crashWhenCantFindBone) {
-                            throw new RuntimeException("Could not find bone: " + boneAnimation.boneName);
-                        } else {
-                            continue;
-                        }
-                    }
-                    BoneSnapshot initialSnapshot = first.get().getInitialSnapshot();
-                    assert boneSnapshot != null : "Bone snapshot was null";
+                for (IBone bone : modelRendererList) {
+                    BoneAnimationQueue boneAnimationQueue = boneAnimationQueues.get(bone.getName());
+                    BoneSnapshot boneSnapshot = this.boneSnapshots.get(bone.getName());
 
-                    VectorKeyFrameList<KeyFrame<Evaluatable>> rotationKeyFrames = boneAnimation.rotationKeyFrames;
-                    VectorKeyFrameList<KeyFrame<Evaluatable>> positionKeyFrames = boneAnimation.positionKeyFrames;
-                    VectorKeyFrameList<KeyFrame<Evaluatable>> scaleKeyFrames = boneAnimation.scaleKeyFrames;
+                    if(boneSnapshot == null) {
+                        continue;
+                    }
+
+                    BoneSnapshot initialSnapshot = bone.getInitialSnapshot();
+
+                    //can be null
+                    BoneAnimation boneAnimation = currentAnimation.boneAnimations.get(bone.getName());
 
                     // Adding the initial positions of the upcoming animation, so the model
                     // transitions to the initial state of the new animation
-                    if (!rotationKeyFrames.xKeyFrames.isEmpty()) {
-                        AnimationPoint xPoint = getTransitionPointAtTick(context, rotationKeyFrames.xKeyFrames, tick, true, Axis.X,
+                    if (boneAnimation != null && !boneAnimation.rotationKeyFrames.xKeyFrames.isEmpty()) {
+                        AnimationPoint xPoint = getTransitionPointAtTick(context, boneAnimation.rotationKeyFrames.xKeyFrames, tick, true, Axis.X,
                                 evaluator);
-                        AnimationPoint yPoint = getTransitionPointAtTick(context, rotationKeyFrames.yKeyFrames, tick, true, Axis.Y,
+                        AnimationPoint yPoint = getTransitionPointAtTick(context, boneAnimation.rotationKeyFrames.yKeyFrames, tick, true, Axis.Y,
                                 evaluator);
-                        AnimationPoint zPoint = getTransitionPointAtTick(context, rotationKeyFrames.zKeyFrames, tick, true, Axis.Z,
+                        AnimationPoint zPoint = getTransitionPointAtTick(context, boneAnimation.rotationKeyFrames.zKeyFrames, tick, true, Axis.Z,
                                 evaluator);
                         boneAnimationQueue.rotationXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.rotationValueX - initialSnapshot.rotationValueX,
@@ -456,13 +450,24 @@ public class AnimationController<T extends IAnimatable> {
                                 boneSnapshot.rotationValueZ - initialSnapshot.rotationValueZ,
                                 zPoint.animationStartValue));
                     }
+                    else {
+                        boneAnimationQueue.rotationXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
+                                boneSnapshot.rotationValueX - initialSnapshot.rotationValueX,
+                                initialSnapshot.rotationValueX));
+                        boneAnimationQueue.rotationYQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
+                                boneSnapshot.rotationValueY - initialSnapshot.rotationValueY,
+                                initialSnapshot.rotationValueY));
+                        boneAnimationQueue.rotationZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
+                                boneSnapshot.rotationValueZ - initialSnapshot.rotationValueZ,
+                                initialSnapshot.rotationValueZ));
+                    }
 
-                    if (!positionKeyFrames.xKeyFrames.isEmpty()) {
-                        AnimationPoint xPoint = getTransitionPointAtTick(context, positionKeyFrames.xKeyFrames, tick, false, Axis.X,
+                    if (boneAnimation != null && !boneAnimation.positionKeyFrames.xKeyFrames.isEmpty()) {
+                        AnimationPoint xPoint = getTransitionPointAtTick(context, boneAnimation.positionKeyFrames.xKeyFrames, tick, false, Axis.X,
                                 evaluator);
-                        AnimationPoint yPoint = getTransitionPointAtTick(context, positionKeyFrames.yKeyFrames, tick, false, Axis.Y,
+                        AnimationPoint yPoint = getTransitionPointAtTick(context, boneAnimation.positionKeyFrames.yKeyFrames, tick, false, Axis.Y,
                                 evaluator);
-                        AnimationPoint zPoint = getTransitionPointAtTick(context, positionKeyFrames.zKeyFrames, tick, false, Axis.Z,
+                        AnimationPoint zPoint = getTransitionPointAtTick(context, boneAnimation.positionKeyFrames.zKeyFrames, tick, false, Axis.Z,
                                 evaluator);
                         boneAnimationQueue.positionXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.positionOffsetX, xPoint.animationStartValue));
@@ -471,13 +476,21 @@ public class AnimationController<T extends IAnimatable> {
                         boneAnimationQueue.positionZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.positionOffsetZ, zPoint.animationStartValue));
                     }
+                    else {
+                        boneAnimationQueue.positionXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
+                                boneSnapshot.positionOffsetX, initialSnapshot.positionOffsetX));
+                        boneAnimationQueue.positionYQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
+                                boneSnapshot.positionOffsetY, initialSnapshot.positionOffsetY));
+                        boneAnimationQueue.positionZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
+                                boneSnapshot.positionOffsetZ, initialSnapshot.positionOffsetZ));
+                    }
 
-                    if (!scaleKeyFrames.xKeyFrames.isEmpty()) {
-                        AnimationPoint xPoint = getTransitionPointAtTick(context, scaleKeyFrames.xKeyFrames, tick, false, Axis.X,
+                    if (boneAnimation != null && !boneAnimation.scaleKeyFrames.xKeyFrames.isEmpty()) {
+                        AnimationPoint xPoint = getTransitionPointAtTick(context, boneAnimation.scaleKeyFrames.xKeyFrames, tick, false, Axis.X,
                                 evaluator);
-                        AnimationPoint yPoint = getTransitionPointAtTick(context, scaleKeyFrames.yKeyFrames, tick, false, Axis.Y,
+                        AnimationPoint yPoint = getTransitionPointAtTick(context, boneAnimation.scaleKeyFrames.yKeyFrames, tick, false, Axis.Y,
                                 evaluator);
-                        AnimationPoint zPoint = getTransitionPointAtTick(context, scaleKeyFrames.zKeyFrames, tick, false, Axis.Z,
+                        AnimationPoint zPoint = getTransitionPointAtTick(context, boneAnimation.scaleKeyFrames.zKeyFrames, tick, false, Axis.Z,
                                 evaluator);
                         boneAnimationQueue.scaleXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.scaleValueX, xPoint.animationStartValue));
@@ -485,6 +498,14 @@ public class AnimationController<T extends IAnimatable> {
                                 boneSnapshot.scaleValueY, yPoint.animationStartValue));
                         boneAnimationQueue.scaleZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.scaleValueZ, zPoint.animationStartValue));
+                    }
+                    else {
+                        boneAnimationQueue.scaleXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
+                                boneSnapshot.scaleValueX, initialSnapshot.scaleValueX));
+                        boneAnimationQueue.scaleYQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
+                                boneSnapshot.scaleValueY, initialSnapshot.scaleValueY));
+                        boneAnimationQueue.scaleZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
+                                boneSnapshot.scaleValueZ, initialSnapshot.scaleValueZ));
                     }
                 }
             }
@@ -522,11 +543,7 @@ public class AnimationController<T extends IAnimatable> {
     private void saveSnapshotsForAnimation(Animation animation,
                                            HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection) {
         for (Pair<IBone, BoneSnapshot> snapshot : boneSnapshotCollection.values()) {
-            if (animation != null && animation.boneAnimations != null) {
-                if (animation.boneAnimations.stream().anyMatch(x -> x.boneName.equals(snapshot.getLeft().getName()))) {
-                    this.boneSnapshots.put(snapshot.getLeft().getName(), new BoneSnapshot(snapshot.getRight()));
-                }
-            }
+            this.boneSnapshots.put(snapshot.getLeft().getName(), new BoneSnapshot(snapshot.getRight()));
         }
     }
 
@@ -562,8 +579,7 @@ public class AnimationController<T extends IAnimatable> {
 
         // Loop through every boneanimation in the current animation and process the
         // values
-        List<BoneAnimation> boneAnimations = currentAnimation.boneAnimations;
-        for (BoneAnimation boneAnimation : boneAnimations) {
+        for (BoneAnimation boneAnimation : currentAnimation.boneAnimations.values()) {
             BoneAnimationQueue boneAnimationQueue = boneAnimationQueues.get(boneAnimation.boneName);
             if (boneAnimationQueue == null) {
                 if (crashWhenCantFindBone) {
