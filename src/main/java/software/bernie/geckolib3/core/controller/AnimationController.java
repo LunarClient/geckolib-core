@@ -156,6 +156,8 @@ public class AnimationController<T extends IAnimatable> {
     public double animationSpeed = 1D;
     private final Set<EventKeyFrame<?>> executedKeyFrames = new HashSet<>();
 
+    private Set<String> missingAnimations = new HashSet<>();
+
     /**
      * This method sets the current animation with an animation builder. You can run
      * this method every frame, if you pass in the same animation builder every
@@ -174,8 +176,9 @@ public class AnimationController<T extends IAnimatable> {
                 // loop boolean along the way
                 LinkedList<Animation> animations = builder.getRawAnimationList().stream().map((rawAnimation) -> {
                     Animation animation = model.getAnimation(rawAnimation.animationName, animatable);
-                    if (animation == null) {
+                    if (animation == null && !missingAnimations.contains(rawAnimation.animationName)) {
                         System.out.printf("Could not load animation: %s. Is it missing?", rawAnimation.animationName);
+                        missingAnimations.add(rawAnimation.animationName);
                         encounteredError.set(true);
                     }
                     if (animation != null && rawAnimation.loop != null) {
