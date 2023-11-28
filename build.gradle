@@ -6,7 +6,7 @@ buildscript {
     dependencies {
         classpath 'gradle.plugin.com.google.cloud.artifactregistry:artifactregistry-gradle-plugin:2.2.0'
     }
-}
+} 
 
 plugins {
     id 'java-library'
