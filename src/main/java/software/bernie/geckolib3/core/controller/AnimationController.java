@@ -182,7 +182,7 @@ public class AnimationController<T extends IAnimatable> {
                 LinkedList<Animation> animations = builder.getRawAnimationList().stream().map((rawAnimation) -> {
                     Animation animation = model.getAnimation(rawAnimation.animationName, animatable);
                     if (animation == null && !missingAnimations.contains(rawAnimation.animationName)) {
-                        System.out.printf("Could not load animation: %s. Is it missing?", rawAnimation.animationName);
+                        System.out.printf("%s: Could not play animation: %s. Is it missing?\n", model.getModelName(), rawAnimation.animationName);
                         missingAnimations.add(rawAnimation.animationName);
                         encounteredError.set(true);
                     }

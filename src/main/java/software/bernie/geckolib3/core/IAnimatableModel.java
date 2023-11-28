@@ -40,4 +40,6 @@ public interface IAnimatableModel<E>
 	}
 
 	void setMolangQueries(IAnimatable animatable, double currentTick);
+
+    String getModelName();
 }
