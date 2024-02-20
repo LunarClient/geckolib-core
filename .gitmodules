@@ -1,4 +1,4 @@
 [submodule "particleman"]
 	path = particleman
-	url = https://github.com/LunarClient/particleman
+	url = https://github.com/LunarClient/molangkit
 	branch = just-molang
