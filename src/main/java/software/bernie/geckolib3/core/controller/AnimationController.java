@@ -151,6 +151,7 @@ public class AnimationController<T extends IAnimatable> {
     public double tickOffset;
     protected Queue<Animation> animationQueue = new LinkedList<>();
     protected Animation currentAnimation;
+    protected Animation previousAnimation;
     protected AnimationBuilder currentAnimationBuilder = new AnimationBuilder();
     protected boolean shouldResetTick = false;
     private final HashMap<String, BoneSnapshot> boneSnapshots = new HashMap<>();
@@ -370,6 +371,7 @@ public class AnimationController<T extends IAnimatable> {
                 Animation animation = model.getAnimation(currentAnimation.animationName, this.animatable);
                 if (animation != null) {
                     boolean loop = currentAnimation.loop;
+                    previousAnimation = currentAnimation;
                     currentAnimation = animation;
                     currentAnimation.loop = loop;
                 } else {
@@ -439,6 +441,7 @@ public class AnimationController<T extends IAnimatable> {
 
                     //can be null
                     BoneAnimation boneAnimation = currentAnimation.boneAnimations.get(bone.getName());
+                    BoneAnimation previousAnimation = this.previousAnimation == null ? null : this.previousAnimation.boneAnimations.get(bone.getName());
 
                     // Adding the initial positions of the upcoming animation, so the model
                     // transitions to the initial state of the new animation
@@ -458,15 +461,15 @@ public class AnimationController<T extends IAnimatable> {
                         boneAnimationQueue.rotationZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.rotationValueZ - initialSnapshot.rotationValueZ,
                                 zPoint.animationStartValue));
-                    } else {
+                    } else if (previousAnimation != null && !previousAnimation.rotationKeyFrames.xKeyFrames.isEmpty()) {
                         boneAnimationQueue.rotationXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
-                                boneSnapshot.rotationValueX - initialSnapshot.rotationValueX,
+                                boneSnapshot.rotationValueX,
                                 initialSnapshot.rotationValueX));
                         boneAnimationQueue.rotationYQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
-                                boneSnapshot.rotationValueY - initialSnapshot.rotationValueY,
+                                boneSnapshot.rotationValueY,
                                 initialSnapshot.rotationValueY));
                         boneAnimationQueue.rotationZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
-                                boneSnapshot.rotationValueZ - initialSnapshot.rotationValueZ,
+                                boneSnapshot.rotationValueZ,
                                 initialSnapshot.rotationValueZ));
                     }
 
@@ -483,7 +486,7 @@ public class AnimationController<T extends IAnimatable> {
                                 boneSnapshot.positionOffsetY, yPoint.animationStartValue));
                         boneAnimationQueue.positionZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.positionOffsetZ, zPoint.animationStartValue));
-                    } else {
+                    } else if (previousAnimation != null && !previousAnimation.positionKeyFrames.xKeyFrames.isEmpty()) {
                         boneAnimationQueue.positionXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.positionOffsetX, initialSnapshot.positionOffsetX));
                         boneAnimationQueue.positionYQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
@@ -505,7 +508,7 @@ public class AnimationController<T extends IAnimatable> {
                                 boneSnapshot.scaleValueY, yPoint.animationStartValue));
                         boneAnimationQueue.scaleZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.scaleValueZ, zPoint.animationStartValue));
-                    } else {
+                    } else if (previousAnimation != null && !previousAnimation.scaleKeyFrames.xKeyFrames.isEmpty()) {
                         boneAnimationQueue.scaleXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.scaleValueX, initialSnapshot.scaleValueX));
                         boneAnimationQueue.scaleYQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
@@ -573,6 +576,7 @@ public class AnimationController<T extends IAnimatable> {
                     // animation next frame
                     this.animationState = AnimationState.Transitioning;
                     shouldResetTick = true;
+                    previousAnimation = currentAnimation;
                     currentAnimation = this.animationQueue.peek();
                 }
             } else {
@@ -665,6 +669,7 @@ public class AnimationController<T extends IAnimatable> {
         }
 
         if (this.transitionLengthTicks == 0 && shouldResetTick && this.animationState == AnimationState.Transitioning) {
+            previousAnimation = currentAnimation;
             this.currentAnimation = animationQueue.poll();
         }
     }
