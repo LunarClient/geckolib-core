@@ -8,6 +8,7 @@ package software.bernie.geckolib3.core.controller;
 import com.eliotlash.molang.ast.Evaluatable;
 import com.eliotlash.molang.ast.Evaluator;
 import com.eliotlash.molang.variables.ExecutionContext;
+import com.eliotlash.molang.variables.VariableFlavor;
 import org.apache.commons.lang3.tuple.Pair;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -363,7 +364,7 @@ public class AnimationController<T extends IAnimatable> {
     public void process(double tick, AnimationEvent<T> event, List<IBone> modelRendererList,
                         HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection, Evaluator evaluator,
                         ExecutionContext context, boolean crashWhenCantFindBone) {
-        context.setVariable("query.life_time", tick / 20);
+        context.setVariable(VariableFlavor.QUERY, "life_time", tick / 20);
 
         if (currentAnimation != null) {
             IAnimatableModel<T> model = getModel(this.animatable);
@@ -525,7 +526,7 @@ public class AnimationController<T extends IAnimatable> {
     }
 
     private void setAnimTime(ExecutionContext context, double tick) {
-        context.setVariable("query.anim_time", tick / 20);
+        context.setVariable(VariableFlavor.QUERY, "anim_time", tick / 20);
     }
 
     @SuppressWarnings("unchecked")
