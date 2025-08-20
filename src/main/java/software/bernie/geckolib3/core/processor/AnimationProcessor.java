@@ -44,9 +44,8 @@ public class AnimationProcessor<T extends IAnimatable> {
         HashMap<String, DirtyTracker> modelTracker = createNewDirtyTracker();
 
         // Store the current value of each bone rotation/position/scale
-        updateBoneSnapshots(manager.getBoneSnapshotCollection());
-
         HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshots = manager.getBoneSnapshotCollection();
+        updateBoneSnapshots(boneSnapshots);
 
         for (AnimationController<T> controller : manager.getAnimationControllers().values()) {
             if (reloadAnimations) {
@@ -221,7 +220,7 @@ public class AnimationProcessor<T extends IAnimatable> {
     }
 
     private HashMap<String, DirtyTracker> createNewDirtyTracker() {
-        HashMap<String, DirtyTracker> tracker = new HashMap<>();
+        HashMap<String, DirtyTracker> tracker = new HashMap<>(modelRendererList.size());
         for (IBone bone : modelRendererList) {
             tracker.put(bone.getName(), new DirtyTracker(false, false, false, bone));
         }

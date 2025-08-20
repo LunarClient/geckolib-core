@@ -12,16 +12,18 @@ import java.util.List;
 import java.util.Objects;
 
 public class KeyFrame<T> {
-    private Double length;
-    private T startValue;
-    private T endValue;
-    public EasingType easingType = EasingType.Linear;
-    public List<Double> easingArgs = new ArrayList<>();
+    private final Double length;
+    private final T startValue;
+    private final T endValue;
+    public final EasingType easingType;
+    public final List<Double> easingArgs;
 
     public KeyFrame(Double length, T startValue, T endValue) {
         this.length = length;
         this.startValue = startValue;
         this.endValue = endValue;
+        this.easingType = EasingType.Linear;
+        this.easingArgs = new ArrayList<>();
     }
 
     public KeyFrame(Double length, T startValue, T endValue, EasingType easingType) {
@@ -29,6 +31,7 @@ public class KeyFrame<T> {
         this.startValue = startValue;
         this.endValue = endValue;
         this.easingType = easingType;
+        this.easingArgs = new ArrayList<>();
     }
 
     public KeyFrame(Double length, T startValue, T endValue, EasingType easingType, List<Double> easingArgs) {
@@ -43,24 +46,12 @@ public class KeyFrame<T> {
         return length;
     }
 
-    public void setLength(Double length) {
-        this.length = length;
-    }
-
     public T getStartValue() {
         return startValue;
     }
 
-    public void setStartValue(T startValue) {
-        this.startValue = startValue;
-    }
-
     public T getEndValue() {
         return endValue;
-    }
-
-    public void setEndValue(T endValue) {
-        this.endValue = endValue;
     }
 
     @Override

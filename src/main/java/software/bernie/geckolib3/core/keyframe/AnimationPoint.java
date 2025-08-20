@@ -12,19 +12,19 @@ public class AnimationPoint {
     /**
      * The current tick in the animation to lerp from
      */
-    public final Double currentTick;
+    public final double currentTick;
     /**
      * The tick that the current animation should end at
      */
-    public final Double animationEndTick;
+    public final double animationEndTick;
     /**
      * The Animation start value.
      */
-    public final Double animationStartValue;
+    public final double animationStartValue;
     /**
      * The Animation end value.
      */
-    public final Double animationEndValue;
+    public final double animationEndValue;
 
     /**
      * The current keyframe.
@@ -32,8 +32,8 @@ public class AnimationPoint {
 
     public final KeyFrame<Evaluatable> keyframe;
 
-    public AnimationPoint(KeyFrame<Evaluatable> keyframe, Double currentTick, Double animationEndTick,
-                          Double animationStartValue, Double animationEndValue) {
+    public AnimationPoint(KeyFrame<Evaluatable> keyframe, double currentTick, double animationEndTick,
+                          double animationStartValue, double animationEndValue) {
         this.keyframe = keyframe;
         this.currentTick = currentTick;
         this.animationEndTick = animationEndTick;

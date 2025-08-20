@@ -738,6 +738,9 @@ public class AnimationController<T extends IAnimatable> {
      **/
     private KeyFrameLocation<KeyFrame<Evaluatable>> getCurrentKeyFrameLocation(List<KeyFrame<Evaluatable>> frames,
                                                                                double ageInTicks) {
+        if (frames.size() == 1) {
+            return new KeyFrameLocation<>(frames.get(0), ageInTicks);
+        }
         double totalTimeTracker = 0;
         for (KeyFrame<Evaluatable> frame : frames) {
             totalTimeTracker += frame.getLength();
